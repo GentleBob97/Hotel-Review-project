@@ -1,9 +1,11 @@
 # Hotel-Review-project
-Progetto "Hotel_Reviews"
 
 
+Sono Roberto Zagonel, nel momento della creazione di questo Repo sono neaolaureato in Ingegneria Chimica e dei Materiali presso UNIPD.
+Il progetto "Hotel_Reviews" si tratta di un’analisi end‑to‑end dei dati dei clienti di Booking reali, utilizzando congiuntamente Python libreria Pandas, SQL e visualizzazioni con Matplotlib. E' stato realizzato come missione lavorativa assegnata dalla docente Ilardo di Talentform.
 
-Sono presenti i seguenti file:
+A seguire, la catalogazione dei file:
+
 
 DATASET.CSV (DATASET PULITO PER ANALISI);
 
