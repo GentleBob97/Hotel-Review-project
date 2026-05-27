@@ -1,0 +1,159 @@
+verifica db
+
+select *
+FROM Hotels JOIN Reviews ON Hotels.id_hotel = Reviews.id_hotel
+JOIN Hotel_Stats ON Hotels.id_stats = Hotel_Stats.id_stats;
+
+--
+1. Recensioni nel Tempo:
+Andamento recensioni mese e anno
+
+SELECT 
+YEAR(review_date) AS year_review,
+MONTH(review_date) AS month_review,
+COUNT(*) AS tot_reviews
+FROM Reviews
+GROUP BY YEAR(review_date), MONTH(review_date)
+ORDER BY year_review, month_review;
+--
+Hotel con picco recensioni
+
+SELECT 
+Hotels.hotel_name,
+COUNT(Reviews.id_review) AS tot_reviews
+FROM Hotels JOIN Reviews ON Hotels.id_hotel = Reviews.id_hotel
+GROUP BY Hotels.id_hotel, Hotels.hotel_name
+ORDER BY tot_reviews DESC;
+--
+2. Nazionalità recensori
+Top 10 nazionalità per numero recensioni e score medio
+
+SELECT 
+Reviewers.nationality,
+COUNT(Reviews.id_review) AS number_reviews,
+AVG(Reviews.score) AS average_score
+FROM Reviews JOIN Reviewers ON Reviews.id_reviewer = Reviewers.id_reviewer
+GROUP BY nationality
+ORDER BY number_reviews DESC
+LIMIT 10;
+--
+% contributo top nazionalità al totale recensioni
+
+SELECT 
+Reviewers.nationality,
+COUNT(*) AS number_reviews,
+ROUND( COUNT(*) * 100.0 / (SELECT COUNT(*) FROM Reviews),2 ) AS tot_percent
+FROM Reviews JOIN Reviewers ON Reviews.id_reviewer = Reviewers.id_reviewer
+GROUP BY nationality
+ORDER BY number_reviews DESC
+LIMIT 10;
+--
+Confronto score medio UK vs altri 
+
+SELECT 
+CASE 
+WHEN TRIM(LOWER(Reviewers.nationality)) = 'united kingdom'
+THEN 'UK'
+ELSE 'Others'
+END AS Comparison,
+COUNT(Reviews.id_review) AS number_reviews,
+AVG(Reviews.score) AS average_score
+FROM Reviewers JOIN Reviews ON Reviews.id_reviewer = Reviewers.id_reviewer
+GROUP BY Comparison;
+--
+3. Hotel e Performance
+Hotel con maggior Average_Score e numero recensioni
+
+SELECT 
+average_score, 
+tot_reviews, 
+hotel_name
+FROM Hotel_Stats JOIN Hotels ON Hotel_Stats.id_stats = Hotels.id_stats
+GROUP BY hotel_name  
+ORDER BY average_score  DESC;
+
+SELECT 
+average_score, 
+tot_reviews, 
+hotel_name
+FROM Hotel_Stats JOIN Hotels ON Hotel_Stats.id_stats = Hotels.id_stats
+GROUP BY hotel_name  
+ORDER BY tot_reviews  DESC;
+--
+Analisi gap tra Reviewer Score e Average Score
+
+SELECT 
+Hotels.hotel_name,
+Hotel_Stats.average_score,
+Reviews.score,
+(Hotel_Stats.average_score - Reviews.score) AS score_gap
+FROM Hotels JOIN Hotel_Stats ON Hotel_Stats.id_stats = Hotels.id_stats
+JOIN Reviews ON Reviews.id_hotel = Hotels.id_hotel
+GROUP BY score_gap ASC;
+--
+4. Geografia
+Distribuzione recensioni per città 
+
+SELECT 
+COUNT(Reviews.id_review) AS tot_reviews,
+CASE
+WHEN SUBSTRING_INDEX(trim(lower(Hotels.hotel_address)), ' ', -2) = 'United Kingdom'
+THEN 'London UK'
+ELSE SUBSTRING_INDEX(Hotels.hotel_address, ' ', -2)
+END AS city
+FROM Hotels JOIN Hotel_Stats ON Hotels.id_stats = Hotel_Stats.id_stats
+JOIN Reviews ON Reviews.id_hotel = Hotels.id_hotel
+GROUP BY city
+ORDER BY tot_reviews DESC;
+--
+Score medio per nazione, top città 
+
+SELECT 
+AVG(Hotel_Stats.average_score) AS average_score,
+CASE
+WHEN SUBSTRING_INDEX(trim(lower(Hotels.hotel_address)), ' ', -1) = 'Kingdom'
+THEN 'United Kingdom'
+ELSE SUBSTRING_INDEX(Hotels.hotel_address, ' ', -1)
+END AS nation,
+CASE
+WHEN SUBSTRING_INDEX(trim(lower(Hotels.hotel_address)), ' ', -2) = 'United Kingdom'
+THEN 'London UK'
+ELSE SUBSTRING_INDEX(Hotels.hotel_address, ' ', -2)
+END AS city
+FROM Hotels JOIN Hotel_Stats ON Hotels.id_stats = Hotel_Stats.id_stats
+GROUP BY city
+ORDER BY average_score DESC
+LIMIT 10;
+--
+5. Lunghezza Recensioni
+Distribuzione Review_Length per categoria score 
+
+SELECT
+COUNT(Reviewers.id_reviewer) AS number_reviews,
+AVG(positive_word_counts + negative_word_counts) AS avg_review_length,
+CASE
+WHEN score >= 9 THEN 'Excellent'
+WHEN score >= 7 THEN 'Good'
+WHEN score >= 5 THEN 'Sufficient'
+ELSE 'Poor'
+END AS score_category
+FROM Reviews JOIN Reviewers ON Reviews.id_reviewer = Reviewers.id_reviewer
+GROUP BY score_category;
+
+Correlazione lunghezza recensione vs Reviewer_Score
+
+SELECT
+COUNT(Reviewers.id_reviewer) AS number_reviews,
+CASE
+WHEN (positive_word_counts + negative_word_counts) <= 20 THEN 'Short size'
+WHEN (positive_word_counts + negative_word_counts) <= 40 THEN 'Medium size'
+ELSE 'Big size'
+END AS length_category,
+AVG(Reviews.score) as avg_score
+FROM Reviews JOIN Reviewers ON Reviews.id_reviewer = Reviewers.id_reviewer
+GROUP BY length_category;
+
+
+
+
+

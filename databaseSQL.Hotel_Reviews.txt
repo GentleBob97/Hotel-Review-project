@@ -1,0 +1,36 @@
+CREATE TABLE IF NOT EXISTS Reviewers (
+    id_reviewer int(10) PRIMARY KEY,
+    nationality varchar(50) not null,
+    total_reviews_given varchar(5) not null,
+    days_since_last_review varchar(5)
+);
+CREATE TABLE if not exists Hotel_Stats (
+    id_stats int(10) primary key
+    average_score varchar(5) not null,   
+    tot_scored varchar(5) not null,
+    tot_reviews varchar(5) not null
+);
+CREATE TABLE IF NOT EXISTS Hotels (
+    id_hotel int(10) PRIMARY KEY,
+    hotel_name varchar(100) not null,
+    hotel_address varchar(100) not null,
+    lat varchar(10), # tinytext
+    lng varchar(10), #tinytext
+    id_stats int(10) not null,
+    FOREIGN KEY (id_stats) REFERENCES Hotel_Stats(id_stats)
+);
+CREATE TABLE IF NOT EXISTS Reviews (
+    id_review int(10) PRIMARY KEY,
+    negative text(500) not null,
+    negative_word_counts int(5),
+    positive text(500) not null,
+    positive_word_counts int(5),
+    score int(5) not null,
+    tags text(500) not null,
+    review_date date not null,
+    review_extraction date not null,
+    id_reviewer int(10) not null,
+    FOREIGN KEY (id_reviewer) REFERENCES Reviewers(id_reviewer),
+    id_hotel int(10) not null,
+    FOREIGN KEY (id_hotel) REFERENCES Hotels(id_hotel)
+);
