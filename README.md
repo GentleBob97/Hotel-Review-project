@@ -20,3 +20,5 @@ INSERT DATA.SQL (DATI);
 ANALYSIS_QUERIES.SQL (QUERY ANALISI); 
 
 FINAL_REPORT.PDF 
+
+Infine, sono stati raccolti degli screenshot per mostrare i risultati (o la prima parte di essi) di varie query o importanti resoconti, che non sono accessibili se non tramite operazioni su SQL o Python.
