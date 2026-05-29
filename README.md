@@ -21,6 +21,6 @@ databaseSQL.Hotel_Reviews.txt (COMANDI CREAZIONE DATABASE SU SQL);
 
 QuerySQL_Hotel_Reviews.txt (ISTRUZIONI QUERY ANALISI); 
 
-FINAL_REPORT.PDF 
+Report finale.pdf (RELAZIONE INTERO PROGETTO).
 
 Infine, sono stati raccolti degli screenshot per mostrare i risultati (o la prima parte di essi) di varie query o importanti resoconti, che non sono accessibili se non tramite operazioni su SQL o Python.
